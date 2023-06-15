@@ -116,11 +116,7 @@ class BasePreprocessPipeline(ABC, BaseEstimator, TransformerMixin):
 
 class DataPreprocessPipeline:
     def __init__(self) -> None:
-        self.pipeline: Union[Pipeline, ColumnTransformer] = None
-        self.define_pipeline()
-
-    def define_pipeline(self):
-        categorical_features = [
+        self.categorical_features = [
             "job",
             "marital",
             "education",
@@ -130,6 +126,11 @@ class DataPreprocessPipeline:
             "contact",
             "poutcome",
         ]
+
+        self.pipeline: Union[Pipeline, ColumnTransformer] = None
+        self.define_pipeline()
+
+    def define_pipeline(self):
         categorical_pipeline = Pipeline(
             [
                 (
@@ -143,7 +144,7 @@ class DataPreprocessPipeline:
         )
         self.pipeline = ColumnTransformer(
             [
-                ("categorical", categorical_pipeline, categorical_features),
+                ("categorical", categorical_pipeline, self.categorical_features),
             ],
             verbose_feature_names_out=False,
         ).set_output(transform="pandas")
@@ -179,7 +180,8 @@ class DataPreprocessPipeline:
         if self.pipeline is None:
             raise AttributeError
         x = PREPROCESSED_SCHEMA.validate(x)
-        df = self.pipeline.transform(x)
+        pipe_df = self.pipeline.transform(x)
+        df = self.postprocess(x, pipe_df)
         return df
 
     def fit_transform(
@@ -190,7 +192,13 @@ class DataPreprocessPipeline:
         if self.pipeline is None:
             raise AttributeError
         x = PREPROCESSED_SCHEMA.validate(x)
-        df = self.pipeline.fit_transform(x)
+        pipe_df = self.pipeline.fit_transform(x)
+        df = self.postprocess(x, pipe_df)
+        return df
+
+    def postprocess(self, df, pipe_df):
+        for cat in self.categorical_features:
+            df[f"{cat}"] = pipe_df[f"{cat}"]
         return df
 
     def dump_pipeline(
