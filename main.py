@@ -27,9 +27,11 @@ def main(cfg: DictConfig):
             file_path=cfg.train_file_path,
         )
         data_preprocess_pipeline = DataPreprocessPipeline()
-        cv, X_train, Y_train = data_retriever.stratified_kfold_split(
+        cv_dataset = data_retriever.stratified_kfold_split(
             raw_df, data_preprocess_pipeline
         )
+        for dataset in cv_dataset:
+            print(dataset[0].shape)
 
 
 if __name__ == "__main__":

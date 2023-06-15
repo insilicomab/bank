@@ -28,7 +28,7 @@ raw_df shape: {raw_df.shape}
 
     def stratified_kfold_split(
         self, raw_df: pd.DataFrame, data_preprocess_pipeline: DataPreprocessPipeline
-    ) -> list[list, pd.DataFrame, pd.Series]:
+    ) -> list[list[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]]:
         _train_df = data_preprocess_pipeline.preprocess(x=raw_df)
         train_df = data_preprocess_pipeline.fit_transform(x=_train_df)
 
@@ -50,10 +50,21 @@ preprocessed train df shape: {train_df.shape}
         X_train = X_SCHEMA.validate(X_train)
         Y_train = Y_SCHEMA.validate(Y_train)
 
-        cv = list(
-            StratifiedKFold(n_splits=10, shuffle=True, random_state=1234).split(
-                X_train, Y_train
-            )
-        )
+        # cv = list(
+        #     StratifiedKFold(n_splits=10, shuffle=True, random_state=1234).split(
+        #         X_train, Y_train
+        #     )
+        # )
+        cv_dataset = [
+            [
+                X_train.iloc[train_index],
+                X_train.iloc[val_index],
+                Y_train.iloc[train_index],
+                Y_train.iloc[val_index],
+            ]
+            for train_index, val_index in StratifiedKFold(
+                n_splits=10, shuffle=True, random_state=1234
+            ).split(X_train, Y_train)
+        ]
         logger.info("done split data")
-        return cv, X_train, Y_train
+        return cv_dataset
