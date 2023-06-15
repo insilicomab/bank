@@ -1,4 +1,4 @@
-from pandera import Check, Column, DataFrameSchema, Index
+from pandera import Check, Column, DataFrameSchema, Index, SeriesSchema
 
 JOB = [
     "blue-collar",
@@ -95,5 +95,36 @@ PREPROCESSED_SCHEMA = DataFrameSchema(
     },
     index=Index(int),
     strict=True,
+    coerce=True,
+)
+
+X_SCHEMA = DataFrameSchema(
+    columns={
+        "age": Column(int),
+        "job": Column(float),
+        "marital": Column(float),
+        "education": Column(float),
+        "default": Column(float),
+        "balance": Column(int),
+        "housing": Column(float),
+        "loan": Column(float),
+        "contact": Column(float),
+        "duration": Column(int),
+        "campaign": Column(int),
+        "pdays": Column(int),
+        "previous": Column(int),
+        "poutcome": Column(float),
+        "isOver60yr": Column(int),
+        "datetime_int": Column(float),
+    },
+    index=Index(int),
+    strict=True,
+    coerce=True,
+)
+
+Y_SCHEMA = SeriesSchema(
+    int,
+    checks=Check.isin((0, 1)),
+    nullable=False,
     coerce=True,
 )
