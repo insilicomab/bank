@@ -145,7 +145,7 @@ class DataPreprocessPipeline:
             [
                 ("categorical", categorical_pipeline, categorical_features),
             ],
-            verbose_feature_names_out=True,
+            verbose_feature_names_out=False,
         ).set_output(transform="pandas")
         logger.info(f"pipeline: {self.pipeline}")
 
