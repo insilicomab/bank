@@ -37,6 +37,12 @@ raw_df shape: {raw_df.shape}
         #     .named_steps["ordinal_encoder"]
         #     .categories_
         # )
+        logger.info(
+            f"""
+preprocessed train df columns: {train_df.columns}
+preprocessed train df shape: {train_df.shape}
+    """
+        )
 
         X_train = train_df.drop(["y", "id"], axis=1).reset_index(drop=True)
         Y_train = train_df["y"].reset_index(drop=True)
@@ -49,4 +55,5 @@ raw_df shape: {raw_df.shape}
                 X_train, Y_train
             )
         )
+        logger.info("done split data")
         return cv, X_train, Y_train
