@@ -122,6 +122,7 @@ class DataPreprocessPipeline:
             "job",
             "marital",
             "education",
+            "default",
             "housing",
             "loan",
             "contact",
@@ -156,3 +157,15 @@ class DataPreprocessPipeline:
         x = create_datetime(x)
         x = clip_value(x)
         return x
+
+    def fit(
+        self,
+        x: pd.DataFrame,
+        y=None,
+    ):
+        if self.pipeline is None:
+            raise AttributeError
+        x = WEEKLY_SCHEMA.validate(x)
+        self.pipeline.fit(x)
+
+        return self

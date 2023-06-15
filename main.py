@@ -28,8 +28,8 @@ def main(cfg: DictConfig):
         )
         print(raw_df.head())
         data_process_pipeline = DataPreprocessPipeline()
-        train_df = data_process_pipeline.preprocess(x=raw_df)
-        print(train_df.head())
+        _train_df = data_process_pipeline.preprocess(x=raw_df)
+        print(_train_df.head())
 
 
 if __name__ == "__main__":
