@@ -1,0 +1,158 @@
+from abc import ABC, abstractmethod
+from typing import Union
+
+import numpy as np
+import pandas as pd
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OrdinalEncoder
+
+from src.dataset.schema import BASE_SCHEMA
+from src.middleware.logger import configure_logger
+
+logger = configure_logger(__name__)
+
+
+# 特徴量（60歳以上かどうか）を生成する関数
+def is_over_sixty(df: pd.DataFrame) -> pd.DataFrame:
+    df["isOver60yr"] = df["age"].apply(lambda x: 1 if x >= 60 else 0)
+    return df
+
+
+# 特徴量（datetime）を生成する関数
+def create_datetime(df: pd.DataFrame) -> pd.DataFrame:
+    # month を文字列から数値に変換
+    month_dict = {
+        "jan": 1,
+        "feb": 2,
+        "mar": 3,
+        "apr": 4,
+        "may": 5,
+        "jun": 6,
+        "jul": 7,
+        "aug": 8,
+        "sep": 9,
+        "oct": 10,
+        "nov": 11,
+        "dec": 12,
+    }
+    df["month_int"] = df["month"].map(month_dict)
+
+    # month と day を datetime に変換
+    data_datetime = (
+        df.assign(
+            ymd_str=lambda x: "2014"
+            + "-"
+            + x["month_int"].astype(str)
+            + "-"
+            + x["day"].astype(str)
+        )
+        .assign(datetime=lambda x: pd.to_datetime(x["ymd_str"]))["datetime"]
+        .values
+    )
+
+    # datetime を int に変換する
+    index = pd.DatetimeIndex(data_datetime)
+    df["datetime_int"] = np.log(index.astype(np.int64))
+
+    # 不要な列を削除
+    df = df.drop(["month", "day", "month_int"], axis=1)
+    return df
+
+
+# 1%、99%点を計算し、clipping
+def clip_value(df: pd.DataFrame) -> pd.DataFrame:
+    p01 = df["balance"].quantile(0.01)
+    p99 = df["balance"].quantile(0.99)
+    df["balance"] = df["balance"].clip(p01, p99)
+    return df
+
+
+class BasePreprocessPipeline(ABC, BaseEstimator, TransformerMixin):
+    def __init__(self):
+        pass
+
+    @abstractmethod
+    def fit(
+        self,
+        x: pd.DataFrame,
+        y=None,
+    ):
+        raise NotImplementedError
+
+    @abstractmethod
+    def transform(
+        self,
+        x: pd.DataFrame,
+    ) -> np.ndarray:
+        raise NotImplementedError
+
+    @abstractmethod
+    def fit_transform(
+        self,
+        x: pd.DataFrame,
+        y=None,
+    ) -> np.ndarray:
+        raise NotImplementedError
+
+    @abstractmethod
+    def dump_pipeline(
+        self,
+        file_path: str,
+    ):
+        raise NotImplementedError
+
+    @abstractmethod
+    def load_pipeline(
+        self,
+        file_path: str,
+    ):
+        raise NotImplementedError
+
+
+class DataPreprocessPipeline:
+    def __init__(self) -> None:
+        self.pipeline: Union[Pipeline, ColumnTransformer] = None
+        self.define_pipeline()
+
+    def define_pipeline(self):
+        categorical_features = [
+            "job",
+            "marital",
+            "education",
+            "housing",
+            "loan",
+            "contact",
+            "poutcome",
+        ]
+        categorical_pipeline = Pipeline(
+            [
+                (
+                    "simple_imputer",
+                    SimpleImputer(
+                        missing_values=np.nan, strategy="constant", fill_value=None
+                    ),
+                ),
+                ("ordinal_encoder", OrdinalEncoder()),
+            ]
+        )
+        self.pipeline = ColumnTransformer(
+            [
+                ("categorical", categorical_pipeline, categorical_features),
+            ],
+            verbose_feature_names_out=True,
+        )
+        logger.info(f"pipeline: {self.pipeline}")
+
+    def preprocess(
+        self,
+        x: pd.DataFrame,
+        y=None,
+    ) -> pd.DataFrame:
+        x = BASE_SCHEMA.validate(x)
+        x = is_over_sixty(x)
+        x = create_datetime(x)
+        x = clip_value(x)
+        return x

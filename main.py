@@ -6,6 +6,7 @@ from omegaconf import DictConfig
 
 from src.jobs.retrieve import DataRetriever
 from src.middleware.logger import configure_logger
+from src.models.preprocess import DataPreprocessPipeline
 
 logger = configure_logger(__name__)
 
@@ -26,6 +27,9 @@ def main(cfg: DictConfig):
             file_path=cfg.train_file_path,
         )
         print(raw_df.head())
+        data_process_pipeline = DataPreprocessPipeline()
+        train_df = data_process_pipeline.preprocess(x=raw_df)
+        print(train_df.head())
 
 
 if __name__ == "__main__":
