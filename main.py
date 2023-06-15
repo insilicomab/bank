@@ -32,6 +32,7 @@ def main(cfg: DictConfig):
         )
         for dataset in cv_dataset:
             print(dataset[0].shape)
+            print(dataset[0].head())
 
 
 if __name__ == "__main__":
