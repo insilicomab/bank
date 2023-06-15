@@ -26,10 +26,12 @@ def main(cfg: DictConfig):
         raw_df = data_retriever.retrieve_dataset(
             file_path=cfg.train_file_path,
         )
-        print(raw_df.head())
         data_process_pipeline = DataPreprocessPipeline()
         _train_df = data_process_pipeline.preprocess(x=raw_df)
         print(_train_df.head())
+        train_df = data_process_pipeline.fit_transform(x=_train_df)
+        print(train_df.head())
+        print(train_df.columns)
 
 
 if __name__ == "__main__":

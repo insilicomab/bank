@@ -1,15 +1,17 @@
+import os
 from abc import ABC, abstractmethod
 from typing import Union
 
 import numpy as np
 import pandas as pd
+from joblib import dump, load
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OrdinalEncoder
 
-from src.dataset.schema import BASE_SCHEMA
+from src.dataset.schema import BASE_SCHEMA, PREPROCESSED_SCHEMA
 from src.middleware.logger import configure_logger
 
 logger = configure_logger(__name__)
@@ -144,7 +146,7 @@ class DataPreprocessPipeline:
                 ("categorical", categorical_pipeline, categorical_features),
             ],
             verbose_feature_names_out=True,
-        )
+        ).set_output(transform="pandas")
         logger.info(f"pipeline: {self.pipeline}")
 
     def preprocess(
@@ -165,7 +167,46 @@ class DataPreprocessPipeline:
     ):
         if self.pipeline is None:
             raise AttributeError
-        x = WEEKLY_SCHEMA.validate(x)
+        x = PREPROCESSED_SCHEMA.validate(x)
         self.pipeline.fit(x)
 
         return self
+
+    def transform(
+        self,
+        x: pd.DataFrame,
+    ) -> pd.DataFrame:
+        if self.pipeline is None:
+            raise AttributeError
+        x = PREPROCESSED_SCHEMA.validate(x)
+        df = self.pipeline.transform(x)
+        return df
+
+    def fit_transform(
+        self,
+        x: pd.DataFrame,
+        y=None,
+    ) -> pd.DataFrame:
+        if self.pipeline is None:
+            raise AttributeError
+        x = PREPROCESSED_SCHEMA.validate(x)
+        df = self.pipeline.fit_transform(x)
+        return df
+
+    def dump_pipeline(
+        self,
+        file_path: str,
+    ) -> str:
+        file, ext = os.path.splitext(file_path)
+        if ext != ".pkl":
+            file_path = f"{file}.pkl"
+        logger.info(f"save preprocess pipeline: {file_path}")
+        dump(self.pipeline, file_path)
+        return file_path
+
+    def load_pipeline(
+        self,
+        file_path: str,
+    ):
+        logger.info(f"load preprocess pipeline: {file_path}")
+        self.pipeline = load(file_path)

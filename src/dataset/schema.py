@@ -71,3 +71,29 @@ BASE_SCHEMA = DataFrameSchema(
     strict=True,
     coerce=True,
 )
+
+PREPROCESSED_SCHEMA = DataFrameSchema(
+    columns={
+        "id": Column(int),
+        "age": Column(int),
+        "job": Column(str, checks=Check.isin(JOB)),
+        "marital": Column(str, checks=Check.isin(MARITAL)),
+        "education": Column(str, checks=Check.isin(EDUCATION)),
+        "default": Column(str, checks=Check.isin(DEFAULT)),
+        "balance": Column(int),
+        "housing": Column(str, checks=Check.isin(HOUSING)),
+        "loan": Column(str, checks=Check.isin(LOAN)),
+        "contact": Column(str, checks=Check.isin(CONTACT)),
+        "duration": Column(int),
+        "campaign": Column(int),
+        "pdays": Column(int),
+        "previous": Column(int),
+        "poutcome": Column(str, checks=Check.isin(POUTCOME)),
+        "isOver60yr": Column(int),
+        "datetime_int": Column(float),
+        "y": Column(int, required=False),
+    },
+    index=Index(int),
+    strict=True,
+    coerce=True,
+)
