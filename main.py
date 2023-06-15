@@ -28,10 +28,13 @@ def main(cfg: DictConfig):
         )
         data_process_pipeline = DataPreprocessPipeline()
         _train_df = data_process_pipeline.preprocess(x=raw_df)
-        print(_train_df.head())
         train_df = data_process_pipeline.fit_transform(x=_train_df)
         print(train_df.head())
-        print(train_df.columns)
+        print(
+            data_process_pipeline.pipeline.named_transformers_["categorical"]
+            .named_steps["ordinal_encoder"]
+            .categories_
+        )
 
 
 if __name__ == "__main__":
