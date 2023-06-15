@@ -26,14 +26,9 @@ def main(cfg: DictConfig):
         raw_df = data_retriever.retrieve_dataset(
             file_path=cfg.train_file_path,
         )
-        data_process_pipeline = DataPreprocessPipeline()
-        _train_df = data_process_pipeline.preprocess(x=raw_df)
-        train_df = data_process_pipeline.fit_transform(x=_train_df)
-        print(train_df.head())
-        print(
-            data_process_pipeline.pipeline.named_transformers_["categorical"]
-            .named_steps["ordinal_encoder"]
-            .categories_
+        data_preprocess_pipeline = DataPreprocessPipeline()
+        cv, X_train, Y_train = data_retriever.stratified_kfold_split(
+            raw_df, data_preprocess_pipeline
         )
 
 
