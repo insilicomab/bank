@@ -27,7 +27,7 @@ def main(cfg: DictConfig):
             file_path=cfg.train_file_path,
         )
         data_preprocess_pipeline = DataPreprocessPipeline()
-        cv_dataset = data_retriever.stratified_kfold_split(
+        cross_validation_dataset = data_retriever.stratified_kfold_split(
             raw_df, data_preprocess_pipeline
         )
 
