@@ -5,42 +5,36 @@ import lightgbm as lgb
 import numpy as np
 import pandas as pd
 import yaml
-from lightgbm import LGBMRegressor
+from lightgbm import LGBMClassifier
 
 from src.middleware.logger import configure_logger
 from src.models.base_model import AbstractBaseModel
 
 logger = configure_logger(__name__)
 
-LGB_REGRESSION_DEFAULT_PARAMS = {
-    "task": "train",
+LGB_CLASSIFICATION_DEFAULT_PARAMS = {
     "boosting": "gbdt",
-    "objective": "regression",
-    "num_leaves": 3,
+    "objective": "binary",
     "learning_rate": 0.05,
-    "feature_fraction": 0.5,
-    "max_depth": -1,
-    "num_iterations": 1000000,
-    "num_threads": 0,
-    "seed": 1234,
+    "random_seed": 1234,
 }
 
 
-class LightGBMRegression(AbstractBaseModel):
+class LightGBMClassification(AbstractBaseModel):
     def __init__(
         self,
-        params: Dict = LGB_REGRESSION_DEFAULT_PARAMS,
+        params: Dict = LGB_CLASSIFICATION_DEFAULT_PARAMS,
         early_stopping_rounds: int = 200,
         eval_metrics: Union[str, List[str]] = "auc",
         verbose_eval: int = 1000,
     ):
-        self.name = "light_gbm_regression"
+        self.name = "light_gbm_classification"
         self.params = params
         self.early_stopping_rounds = early_stopping_rounds
         self.eval_metrics = eval_metrics
         self.verbose_eval = verbose_eval
 
-        self.model: LGBMRegressor = None
+        self.model: LGBMClassifier = None
         self.reset_model(params=self.params)
         self.column_length: int = 0
 
@@ -51,7 +45,7 @@ class LightGBMRegression(AbstractBaseModel):
         if params is not None:
             self.params = params
         logger.info(f"params: {self.params}")
-        self.model = LGBMRegressor(**self.params)
+        self.model = LGBMClassifier(**self.params)
         logger.info(f"initialized model: {self.model}")
 
     def train(

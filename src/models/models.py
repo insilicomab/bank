@@ -3,9 +3,9 @@ from enum import Enum
 from typing import Dict, List, Optional
 
 from src.models.base_model import AbstractBaseModel
-from src.models.light_gbm_regression import (
-    LGB_REGRESSION_DEFAULT_PARAMS,
-    LightGBMRegression,
+from src.models.light_gbm_classification import (
+    LGB_CLASSIFICATION_DEFAULT_PARAMS,
+    LightGBMClassification,
 )
 
 
@@ -17,10 +17,10 @@ class Model(object):
 
 
 class MODELS(Enum):
-    LIGHT_GBM_REGRESSION = Model(
-        name="light_gbm_regression",
-        model=LightGBMRegression,
-        params=LGB_REGRESSION_DEFAULT_PARAMS,
+    LIGHT_GBM_classification = Model(
+        name="light_gbm_classification",
+        model=LightGBMClassification,
+        params=LGB_CLASSIFICATION_DEFAULT_PARAMS,
     )
 
     @staticmethod
