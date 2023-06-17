@@ -17,7 +17,7 @@ class Model(object):
 
 
 class MODELS(Enum):
-    LIGHT_GBM_classification = Model(
+    LIGHT_GBM_CLASSIFICATION = Model(
         name="light_gbm_classification",
         model=LightGBMClassification,
         params=LGB_CLASSIFICATION_DEFAULT_PARAMS,
