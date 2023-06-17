@@ -114,7 +114,7 @@ class BasePreprocessPipeline(ABC, BaseEstimator, TransformerMixin):
         raise NotImplementedError
 
 
-class DataPreprocessPipeline:
+class DataPreprocessPipeline(BasePreprocessPipeline):
     def __init__(self) -> None:
         self.categorical_features = [
             "job",

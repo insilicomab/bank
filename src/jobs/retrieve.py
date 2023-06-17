@@ -30,7 +30,7 @@ raw_df shape: {raw_df.shape}
         self, raw_df: pd.DataFrame, data_preprocess_pipeline: DataPreprocessPipeline
     ) -> list[list[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]]:
         _train_df = data_preprocess_pipeline.preprocess(x=raw_df)
-        train_df = data_preprocess_pipeline.fit_transform(x=_train_df)
+        train_df = data_preprocess_pipeline.fit_transform(_train_df)
 
         # print(
         #     data_preprocess_pipeline.pipeline.named_transformers_["categorical"]
