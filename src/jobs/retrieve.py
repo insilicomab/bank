@@ -50,11 +50,6 @@ preprocessed train df shape: {train_df.shape}
         X_train = X_SCHEMA.validate(X_train)
         Y_train = Y_SCHEMA.validate(Y_train)
 
-        # cv = list(
-        #     StratifiedKFold(n_splits=10, shuffle=True, random_state=1234).split(
-        #         X_train, Y_train
-        #     )
-        # )
         cv_dataset = [
             [
                 X_train.iloc[train_index],
