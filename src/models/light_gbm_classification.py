@@ -13,10 +13,16 @@ from src.models.base_model import AbstractBaseModel
 logger = configure_logger(__name__)
 
 LGB_CLASSIFICATION_DEFAULT_PARAMS = {
+    "task": "train",
     "boosting": "gbdt",
     "objective": "binary",
+    "num_leaves": 3,
     "learning_rate": 0.05,
-    "random_seed": 1234,
+    "feature_fraction": 0.5,
+    "max_depth": -1,
+    "num_iterations": 1000000,
+    "num_threads": 0,
+    "seed": 1234,
 }
 
 
