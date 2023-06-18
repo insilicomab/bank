@@ -30,13 +30,13 @@ class LightGBMClassification(AbstractBaseModel):
     def __init__(
         self,
         params: Dict = LGB_CLASSIFICATION_DEFAULT_PARAMS,
-        early_stopping_rounds: int = 200,
+        stopping_rounds: int = 200,
         eval_metrics: Union[str, List[str]] = "auc",
         verbose_eval: int = 1000,
     ):
         self.name = "light_gbm_classification"
         self.params = params
-        self.early_stopping_rounds = early_stopping_rounds
+        self.stopping_rounds = stopping_rounds
         self.eval_metrics = eval_metrics
         self.verbose_eval = verbose_eval
 
@@ -69,9 +69,11 @@ class LightGBMClassification(AbstractBaseModel):
             X=x_train,
             y=y_train,
             eval_set=eval_set,
-            early_stopping_rounds=self.early_stopping_rounds,
+            callbacks=[
+                lgb.early_stopping(self.stopping_rounds, verbose=True),
+                lgb.log_evaluation(self.verbose_eval),
+            ],
             eval_metric=self.eval_metrics,
-            verbose=self.verbose_eval,
         )
 
     def predict(

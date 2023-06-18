@@ -30,7 +30,7 @@ jobs:
       num_iterations: 1000000
       num_threads: 0
       seed: 1234
-      early_stopping_rounds: 200
+      stopping_rounds: 200
       eval_metrics: auc
       verbose_eval: 1000
 

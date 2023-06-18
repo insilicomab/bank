@@ -1,5 +1,5 @@
 import os
-from datetime import date, datetime, timedelta
+from datetime import datetime
 
 import hydra
 import mlflow
@@ -35,13 +35,14 @@ def main(cfg: DictConfig):
         )
         _model = MODELS.get_model(name=cfg.jobs.model.name)
         model = _model.model(
-            early_stopping_rounds=cfg.jobs.model.params.early_stopping_rounds,
+            stopping_rounds=cfg.jobs.model.params.stopping_rounds,
             eval_metrics=cfg.jobs.model.params.eval_metrics,
             verbose_eval=cfg.jobs.model.params.verbose_eval,
         )
 
         if "params" in cfg.jobs.model.keys():
             model.reset_model(params=cfg.jobs.model.params)
+
         if cfg.jobs.train.run:
             now = datetime.now().strftime("%Y%m%d_%H%M%S")
             preprocess_pipeline_file_path = os.path.join(
