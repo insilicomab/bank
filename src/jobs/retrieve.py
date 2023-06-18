@@ -50,7 +50,7 @@ preprocessed train df shape: {train_df.shape}
         X_train = X_SCHEMA.validate(X_train)
         Y_train = Y_SCHEMA.validate(Y_train)
 
-        cross_validation_dataset = [
+        cross_validation_datasets = [
             [
                 X_train.iloc[train_index],
                 X_train.iloc[val_index],
@@ -62,4 +62,4 @@ preprocessed train df shape: {train_df.shape}
             ).split(X_train, Y_train)
         ]
         logger.info("done split data")
-        return cross_validation_dataset
+        return cross_validation_datasets
