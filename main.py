@@ -44,10 +44,12 @@ def main(cfg: DictConfig):
             model.reset_model(params=cfg.jobs.model.params)
         if cfg.jobs.train.run:
             now = datetime.now().strftime("%Y%m%d_%H%M%S")
-            preprocess_pipeline_file_path = os.path.join(cwd, f"{model.name}_{now}")
+            preprocess_pipeline_file_path = os.path.join(
+                cwd, f"output/{model.name}_{now}"
+            )
             trainer = Trainer()
             for i, dataset in enumerate(cross_validation_datasets):
-                save_file_path = os.path.join(cwd, f"{model.name}_{now}_{i}")
+                save_file_path = os.path.join(cwd, f"output/{model.name}_{now}_{i}")
 
                 x_train, x_valid, y_train, y_valid = dataset
                 evaluation, artifact = trainer.train_and_evaluate(
