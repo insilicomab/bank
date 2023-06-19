@@ -80,7 +80,7 @@ class LightGBMClassification(AbstractBaseModel):
         self,
         x: Union[np.ndarray, pd.DataFrame],
     ) -> Union[np.ndarray, pd.DataFrame]:
-        predictions = self.model.predict(x)
+        predictions = self.model.predict_proba(x)[:, 1]
         return predictions
 
     def save_model_params(
