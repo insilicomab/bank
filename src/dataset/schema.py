@@ -128,3 +128,28 @@ Y_SCHEMA = SeriesSchema(
     nullable=False,
     coerce=True,
 )
+
+RAW_PREDICTION_SCHEMA = DataFrameSchema(
+    columns={
+        "id": Column(int),
+        "age": Column(int),
+        "job": Column(str, checks=Check.isin(JOB)),
+        "marital": Column(str, checks=Check.isin(MARITAL)),
+        "education": Column(str, checks=Check.isin(EDUCATION)),
+        "default": Column(str, checks=Check.isin(DEFAULT)),
+        "balance": Column(int),
+        "housing": Column(str, checks=Check.isin(HOUSING)),
+        "loan": Column(str, checks=Check.isin(LOAN)),
+        "contact": Column(str, checks=Check.isin(CONTACT)),
+        "day": Column(int, checks=Check.isin(DAY)),
+        "month": Column(str, checks=Check.isin(MONTH)),
+        "duration": Column(int),
+        "campaign": Column(int),
+        "pdays": Column(int),
+        "previous": Column(int),
+        "poutcome": Column(str, checks=Check.isin(POUTCOME)),
+    },
+    index=Index(int),
+    strict=True,
+    coerce=True,
+)
