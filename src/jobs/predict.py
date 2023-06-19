@@ -24,7 +24,7 @@ class Predictor:
         predictions: np.ndarray,
     ) -> pd.DataFrame:
         df = df[["id"]]
-        df["prediction"] = predictions
+        df.loc[:, "prediction"] = predictions
         df = PREDICTION_SCHEMA.validate(df)
         logger.info(
             f"""
@@ -42,12 +42,6 @@ predicted df shape: {df.shape}
     ) -> pd.DataFrame:
         data_to_be_predicted_df = RAW_PREDICTION_SCHEMA.validate(
             data_to_be_predicted_df
-        )
-        logger.info(
-            f"""
-predicted df columns: {data_to_be_predicted_df.columns}
-predicted df shape: {data_to_be_predicted_df.shape}
-    """
         )
         _data_to_be_predicted_df = data_preprocess_pipeline.preprocess(
             x=data_to_be_predicted_df
