@@ -153,3 +153,28 @@ RAW_PREDICTION_SCHEMA = DataFrameSchema(
     strict=True,
     coerce=True,
 )
+
+PREPROCESSED_PREDICTION_SCHEMA = DataFrameSchema(
+    columns={
+        "id": Column(int),
+        "age": Column(int),
+        "job": Column(float),
+        "marital": Column(float),
+        "education": Column(float),
+        "default": Column(float),
+        "balance": Column(int),
+        "housing": Column(float),
+        "loan": Column(float),
+        "contact": Column(float),
+        "duration": Column(int),
+        "campaign": Column(int),
+        "pdays": Column(int),
+        "previous": Column(int),
+        "poutcome": Column(float),
+        "isOver60yr": Column(int),
+        "datetime_int": Column(float),
+    },
+    index=Index(int),
+    strict=True,
+    coerce=True,
+)

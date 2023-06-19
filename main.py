@@ -5,6 +5,7 @@ import hydra
 import mlflow
 from omegaconf import DictConfig
 
+from src.jobs.predict import Predictor
 from src.jobs.retrieve import DataRetriever
 from src.jobs.train import Trainer
 from src.middleware.logger import configure_logger
@@ -68,6 +69,19 @@ def main(cfg: DictConfig):
                 )
                 mlflow.log_artifact(artifact.preprocess_file_path, "preprocess")
                 mlflow.log_artifact(artifact.model_file_path, "model")
+
+                if cfg.jobs.predict.run:
+                    data_to_be_predicted_df = data_retriever.retrieve_prediction_data(
+                        file_path=cfg.test_file_path
+                    )
+                    print(data_to_be_predicted_df.head())
+                    predictor = Predictor()
+                    predictions = predictor.predict(
+                        model=model,
+                        data_preprocess_pipeline=data_preprocess_pipeline,
+                        data_to_be_predicted_df=data_to_be_predicted_df,
+                    )
+                    print(predictions.head())
 
 
 if __name__ == "__main__":
