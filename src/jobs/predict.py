@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 from src.dataset.schema import (
+    PREDICTION_SCHEMA,
     PREPROCESSED_PREDICTION_SCHEMA,
     RAW_PREDICTION_SCHEMA,
     X_SCHEMA,
@@ -24,6 +25,7 @@ class Predictor:
     ) -> pd.DataFrame:
         df = df[["id"]]
         df["prediction"] = predictions
+        df = PREDICTION_SCHEMA.validate(df)
         logger.info(
             f"""
 predicted df columns: {df.columns}
