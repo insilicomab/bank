@@ -178,3 +178,13 @@ PREPROCESSED_PREDICTION_SCHEMA = DataFrameSchema(
     strict=True,
     coerce=True,
 )
+
+PREDICTION_SCHEMA = DataFrameSchema(
+    columns={
+        "id": Column(int),
+        "prediction": Column(float),
+    },
+    index=Index(int),
+    strict=True,
+    coerce=True,
+)
