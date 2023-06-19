@@ -6,6 +6,7 @@ import mlflow
 from omegaconf import DictConfig
 
 from src.jobs.predict import Predictor
+from src.jobs.register import DataRegister
 from src.jobs.retrieve import DataRetriever
 from src.jobs.train import Trainer
 from src.middleware.logger import configure_logger
@@ -71,17 +72,33 @@ def main(cfg: DictConfig):
                 mlflow.log_artifact(artifact.model_file_path, "model")
 
                 if cfg.jobs.predict.run:
+                    predictor = Predictor()
                     data_to_be_predicted_df = data_retriever.retrieve_prediction_data(
                         file_path=cfg.test_file_path
                     )
-                    print(data_to_be_predicted_df.head())
-                    predictor = Predictor()
                     predictions = predictor.predict(
                         model=model,
                         data_preprocess_pipeline=data_preprocess_pipeline,
                         data_to_be_predicted_df=data_to_be_predicted_df,
                     )
-                    print(predictions.head())
+                    logger.info(f"predictions: {predictions}")
+                    if cfg.jobs.predict.register:
+                        data_register = DataRegister()
+                        prediction_file_path = os.path.join(
+                            cwd, f"outputs/prediction_{model.name}_{now}_{i}"
+                        )
+                        prediction_file_path = data_register.register(
+                            predictions=predictions,
+                            prediction_file_path=prediction_file_path,
+                        )
+                    mlflow.log_artifact(prediction_file_path, "prediction")
+
+                mlflow.log_artifact(
+                    os.path.join(cwd, "config/config.yaml"), "config.yaml"
+                )
+
+                mlflow.log_param("model", model.name)
+                mlflow.log_params(model.params)
 
 
 if __name__ == "__main__":
