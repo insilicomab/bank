@@ -10,7 +10,6 @@ from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OrdinalEncoder
-
 from src.dataset.schema import BASE_SCHEMA, PREPROCESSED_SCHEMA
 from src.middleware.logger import configure_logger
 
@@ -198,7 +197,7 @@ class DataPreprocessPipeline(BasePreprocessPipeline):
 
     def postprocess(self, df, pipe_df):
         for cat in self.categorical_features:
-            df[f"{cat}"] = pipe_df[f"{cat}"]
+            df[f"{cat}"] = pipe_df[f"{cat}"].astype("category")
         return df
 
     def dump_pipeline(
