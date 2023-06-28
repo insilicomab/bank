@@ -91,7 +91,7 @@ def main(cfg: DictConfig):
                             predictions=predictions,
                             prediction_file_path=prediction_file_path,
                         )
-                    mlflow.log_artifact(prediction_file_path, "prediction")
+                        mlflow.log_artifact(prediction_file_path, "prediction")
 
                 mlflow.log_artifact(
                     os.path.join(cwd, "config/config.yaml"), "config.yaml"
