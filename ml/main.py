@@ -47,12 +47,13 @@ def main(cfg: DictConfig):
 
         if cfg.jobs.train.run:
             now = datetime.now().strftime("%Y%m%d_%H%M%S")
+            os.makedirs(f"outputs/{now}", exist_ok=True)
             preprocess_pipeline_file_path = os.path.join(
-                cwd, f"outputs/pipeline_{model.name}_{now}"
+                cwd, f"outputs/{now}/pipeline_{model.name}_{now}"
             )
             trainer = Trainer()
             for i, dataset in enumerate(cross_validation_datasets):
-                save_file_path = os.path.join(cwd, f"outputs/{model.name}_{now}_{i}")
+                save_file_path = os.path.join(cwd, f"outputs/{now}/{model.name}_{now}_{i}")
 
                 x_train, x_valid, y_train, y_valid = dataset
                 evaluation, artifact = trainer.train_and_evaluate(
@@ -85,7 +86,7 @@ def main(cfg: DictConfig):
                     if cfg.jobs.predict.register:
                         data_register = DataRegister()
                         prediction_file_path = os.path.join(
-                            cwd, f"outputs/prediction_{model.name}_{now}_{i}"
+                            cwd, f"outputs/{now}/prediction_{model.name}_{now}_{i}"
                         )
                         prediction_file_path = data_register.register(
                             predictions=predictions,
